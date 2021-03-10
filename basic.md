@@ -7,7 +7,8 @@
         - value : request url path, eg: "test" or "/test"
         - method: request method, eg: RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE
         - params: {} set request parameters (data sent from client to server), support expression
-
+        - 放在类上，相当于多添加了一层访问路径
+        - 里面的参数越多，对request mapping的约束越多
 
 2. @PathVariable 
 
@@ -53,3 +54,24 @@
         
         方式 4: 使用 javax.servlet原生 HttpServletRequest作为形参
 ![getParameterByHttpServletRequest](imagePool/getParameterByHttpServletRequest.png)
+
+
+
+
+5. 作用域放值 + 页面跳转
+
+        方式 1: ModelAndView
+            实现原理 (source code): 给request域存值 （request.setAttribute(key, value) + 页面跳转 (request.getRequestDispacher().forward(request, response)
+![modelAndView](imagePool/modelAndView.png)
+
+
+        方式 2: Map<String Object> as parameter
+![mapView](imagePool/mapView.png)
+        
+        
+        方式 3: Model model as parameter
+![modelView](imagePool/modelView.png)
+
+    
+        方式 4: 使用 javax.servlet原生 HttpServletRequest作为形参
+![httpServletRequestSetAttributeView](imagePool/httpServletRequestSetAttributeView.png)
