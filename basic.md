@@ -75,3 +75,43 @@
     
         方式 4: 使用 javax.servlet原生 HttpServletRequest作为形参
 ![httpServletRequestSetAttributeView](imagePool/httpServletRequestSetAttributeView.png)
+
+
+
+
+6. 处理静态资源请求/访问
+
+        - 在springMVC的配置文件中添加: (Tomcat中的default servlet) 
+![staticResourceDefaultServlet](imagePool/staticResourceDefaultServlet.png)
+
+        - 当Tomcat default servlet 所设置的<url-pattern>的值与开发人员所配置的servlet的<url-pattern>的值
+        相同时 (<url-pattern>/</url-pattern>)，以开发人员所配置的优先进行匹配; 因此先通过DispatcherServlet
+        进行处理，有则处理，无则交给Tomcat DefaultServlet处理。
+
+
+
+7. mvc驱动标签
+    
+![mvcDriven](imagePool/mvcDriven.png)
+
+        - 启动Tomcat Default Handler 处理静态资源请求
+        - 启动 jackson 将java 对象转化成 json
+        
+        
+
+
+8. JSON  操作
+
+        - types: 
+            - json object: {key1: val1, key2: val2}
+            - json array: [{key1: val1, key2: val2}, {key3: val3, key4: val4}]
+            
+        - SpringMVC 对JSON的支持: 直接返回Java object
+            - step 1: 开启 MVC 驱动
+![mvcDriven](imagePool/mvcDriven.png)
+
+           - step2: 添加 Jackson jars
+![jacksonJars](imagePool/jacksonJars.png)
+
+           - step3: 添加 @ResponseBody 在@controller方法上
+![responseBodyAnnotation](imagePool/responseBodyAnnotation.png)
