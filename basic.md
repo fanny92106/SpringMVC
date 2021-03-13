@@ -116,6 +116,8 @@
            - step3: 添加 @ResponseBody 在@controller方法上
 ![responseBodyAnnotation](imagePool/responseBodyAnnotation.png)
 
+           - step4: 把要返回给客户端的数据直接作为返回值返回 (obj, map, list)
+
 
 
 9. Filter vs Interceptor
