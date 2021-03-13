@@ -115,3 +115,46 @@
 
            - step3: 添加 @ResponseBody 在@controller方法上
 ![responseBodyAnnotation](imagePool/responseBodyAnnotation.png)
+
+
+
+9. Filter vs Interceptor
+
+        1. 实现原理不同:
+            - Filter 是基于函数回调
+            - Interceptor 是基于Java的反射机制 (动态代理)
+            
+        2. 使用范围不同
+            - Filter 实现的是 javax.servlet.Filter 接口，而这个接口是在 Servlet
+            规范中定义的，因此 Filter 的使用要依赖于 Tomcat 等容器，导致他只能在 web
+            程序中使用
+            
+            - Interceptor 是 Spring的一个组件，由 Spring 容器管理，并不依赖Tomcat等
+            web 容器，是可以单独使用的。不仅能应用在 web 程序中，也可以应用在普通的
+            Application 程序中
+            
+        3. 触发机制不同 （执行顺序)
+        
+![filterInterceptorExecutionOrder](imagePool/filterInterceptorExecutionOrder.png)
+
+            - Filter 是在请求进入容器后，但在进入 Servlet 之前进行预处理，请求结束是在 servlet 处理完之后
+            - Interceptor 是在请求进入 Servelt 后，在进入 Controller 之前进行预处理的，Controller中渲染了对应的视图之后结束
+
+
+10. Interceptor 拦截器
+
+        0. 实现方式： 
+            - implement HanderInterceptor 接口
+
+        1. 各个方法在控制器中的处理器中的作用点 (AOP 思想)
+[interceptor.png](imagePool/interceptor.png)
+
+      2. 规则
+          - return true -- 放行； return false -- 拦截
+          - preHandle() 和 postHandle()/afterCompletion() 对拦截器的遍历顺序正好相反: preHnadle()是从小到大, postHandle() 是从大到小, afterCompletion() 是从大到小
+          - 一旦被某个拦截器拦截成功后:
+                - 后面所有拦截器的preHandle()方法都不会执行
+                - 所有拦截器postHanle()方法都不会执行
+                - afterCompletion()方法会被触发，执行顺序为: 当前拦截器的上一个拦截器.afterCompletion() 到第0个拦截器.afterCompletion()
+
+        
