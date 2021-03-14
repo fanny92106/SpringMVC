@@ -129,11 +129,11 @@
         2. 使用范围不同
             - Filter 实现的是 javax.servlet.Filter 接口，而这个接口是在 Servlet
             规范中定义的，因此 Filter 的使用要依赖于 Tomcat 等容器，导致他只能在 web
-            程序中使用
+            程序中使用; 可以应用在所有的 requests 之前
             
             - Interceptor 是 Spring的一个组件，由 Spring 容器管理，并不依赖Tomcat等
             web 容器，是可以单独使用的。不仅能应用在 web 程序中，也可以应用在普通的
-            Application 程序中
+            Application 程序中; 可以设置应用在哪些处理器之前
             
         3. 触发机制不同 （执行顺序)
         
@@ -152,11 +152,53 @@
 [interceptor.png](imagePool/interceptor.png)
 
       2. 规则
-          - return true -- 放行； return false -- 拦截
+          - preHandle() return true -- 放行； return false -- 拦截
           - preHandle() 和 postHandle()/afterCompletion() 对拦截器的遍历顺序正好相反: preHnadle()是从小到大, postHandle() 是从大到小, afterCompletion() 是从大到小
           - 一旦被某个拦截器拦截成功后:
                 - 后面所有拦截器的preHandle()方法都不会执行
                 - 所有拦截器postHanle()方法都不会执行
                 - afterCompletion()方法会被触发，执行顺序为: 当前拦截器的上一个拦截器.afterCompletion() 到第0个拦截器.afterCompletion()
 
+
+
+11. Spring 和 SpringMVC 整合 -- 大总结
+
+        - 加载springMVC容器需要在加载完spring容器之后, 因为springMVC的bean的dependency需要spring容器管理的beans, eg: service bean 被注入到controller中
+        - 通过监听servletContext (servlet container)来加载(init)spring容器
+![configSpringContainerCreation](imagePool/configSpringContainerCreation.png)
         
+        
+        - bean被加载spring容器和springMVC容器重复加载的问题:
+            - 配置springMVC只扫描控制层的packages
+            - 配置spring扫描package + exclude 控制层的packages
+
+
+        各个容器的执行循序:
+        （程序启动时自动创建)servlet context ---> spring context ---> springMVC context
+        
+        
+        - servlet context 初始化后第一个被加载的web.xml中的标签是 
+            <context-param>
+                <param-name>contextConfigLocation</param-name>
+                <param-value>classpath:spring.xml</param-value>
+            </context-param>
+            
+        最后被加载的是 <servlet></servlet>
+
+
+        - web.xml 中的标签的执行顺序
+            0. <ContextParam> -- 指定spring 配置文件的位置和文件名，尤其是更改了默认位置后必须使用
+            1. <Listener> -- 加载spring 配置文件，创建spring容器
+            2. <Filter>
+            3. <Servlet> -- 在内部的<init-param>标签设置springMVC 配置文件的位置和文件名
+            
+            
+        - spring 容器和 springMVC 容器的关系:
+            - spring是父容器，springMVC是子容器
+            - 父容器先被创建，子容器再被创建
+            - 规定: 子容器能够调用访问父容器中的bean, 而父容器不能够调用访问子容器中的bean
+            
+            springMVC管理            spring管理
+                |                     /   \
+            controller           service   dao
+            
