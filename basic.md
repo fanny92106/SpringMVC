@@ -202,3 +202,40 @@
                 |                     /   \
             controller           service   dao
             
+
+
+12. @ModelAttribute
+
+        - 用法:
+            a. 作用在方法上, 表示当前方法会在控制器的所有处理器方法执行之前 先执行
+            b. 作用在参数中, 获取指定的数据 给参数赋值
+            
+        - Use case:
+            当表单提交数据不是完整的实体数据时 (eg: 更新操作)m，保证没有提交数据的字段使用数据库对象原来的数据，而不是null
+        
+        - 原理:
+![modelAttribute1](imagePool/modelAttribute1.png)
+
+![modelAttribute2](imagePool/modelAttribute2.png)
+
+![modelAttribute3](imagePool/modelAttribute3.png)
+        
+        1). 确定一个 key:
+            a. 若目标方法的Pojo类型的参数没有使用 @ModelAttribute作为修饰，则 key为Pojo类名
+            第一个字母的小写
+            b. 若使用了 @ModelAttribute 来修饰，则key为 @ModelAttribute注解的value的属性值
+        2). 在implicitModel 中查找key对应的对象，若存在，则作为入参传入
+        3). 若implicitModel 中不存在key对应的对象，则检查当前的Handler是否使用@SessionAttributes注解修饰，若使用了该注解，且 @SessionAttributes 注解的value属性值包含了key, 则会从HttpSession中来获取key所对应的value值，若存在则直接传入目标方法的入参中，若不存在则抛出异常
+        4). 若Handler没有标识 @SessionAttributes 注解或 @SessionAttributes注解的value值中不包含key, 则会通过反射来创建Pojo类型的参数，传入为目标方法的参数
+        5). springMVC 会把key和value保存到implicitModel中，进而会保存到request中
+        
+
+
+13. @SessionAttributes
+
+        - 用法:
+![sessionAttributes](imagePool/sessionAttributes.png)
+
+            a. 用于多次执行控制器中处理器的参数共享，value用于指定存入的属性名称，type用于指定存入的数据类型
+            b. 只能作用在class上
+            
