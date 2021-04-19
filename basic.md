@@ -239,3 +239,8 @@
             a. 用于多次执行控制器中处理器的参数共享，value用于指定存入的属性名称，type用于指定存入的数据类型
             b. 只能作用在class上
             
+14. 使用request获取各种path
+
+rest url: http://localhost:8080/ssm/emps/1
+![pathTest](imagePool/pathTest.png)
+![Path](imagePool/Path.png)
